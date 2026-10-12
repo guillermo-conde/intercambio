@@ -1,0 +1,54 @@
+:root{
+  --pine:#0e3b2c; --pine-2:#165240; --wine:#8c1d2f; --gold:#e9c46a; --snow:#f6f8fb; --ink:#1c2b25;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:'Nunito',system-ui,sans-serif; color:var(--ink);
+  background:radial-gradient(1200px 600px at 50% -10%,var(--pine-2),var(--pine) 60%,#082419);
+  display:grid; place-items:center; padding:24px; min-height:100vh;
+}
+.snow{position:fixed;inset:0;pointer-events:none;opacity:.55;
+  background-image:
+    radial-gradient(3px 3px at 20px 30px,#fff,transparent),
+    radial-gradient(2px 2px at 90px 120px,#fff,transparent),
+    radial-gradient(3px 3px at 160px 70px,#fff,transparent),
+    radial-gradient(2px 2px at 220px 190px,#fff,transparent);
+  background-size:260px 220px; animation:fall 14s linear infinite}
+@keyframes fall{to{background-position:60px 220px}}
+.card{
+  position:relative; width:min(460px,100%); background:var(--snow); border-radius:22px;
+  padding:56px 32px 32px; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,.35);
+  border-top:14px solid var(--wine);
+}
+.card::before{ /* listón del regalo */
+  content:""; position:absolute; top:-14px; left:50%; width:46px; height:calc(100% + 14px);
+  transform:translateX(-50%); background:linear-gradient(90deg,#c9a24a,var(--gold),#c9a24a);
+  opacity:.16; border-radius:6px; pointer-events:none}
+.bow{position:absolute;top:-34px;left:50%;transform:translateX(-50%);font-size:52px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.3))}
+h1{font-family:'Mountains of Christmas',cursive;font-size:2.6rem;line-height:1.05;margin:0 0 10px;color:var(--wine)}
+.sub{margin:0 0 24px;color:#4a5a53}
+form{display:grid;gap:12px}
+input{
+  font:700 1.3rem 'Nunito',sans-serif; letter-spacing:.12em; text-align:center; text-transform:uppercase;
+  padding:14px; border-radius:12px; border:2px solid #cfd8d3; background:#fff; color:var(--ink);
+}
+input:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-color:var(--pine)}
+button{
+  font:800 1.05rem 'Nunito',sans-serif; padding:14px 18px; border:0; border-radius:12px; cursor:pointer;
+  background:var(--wine); color:#fff; transition:transform .15s,background .15s;
+}
+button:hover{background:#a42439;transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--pine);border:2px solid var(--pine)}
+button.ghost:hover{background:var(--pine);color:#fff}
+.msg{min-height:1.4em;margin:14px 0 0;color:var(--wine);font-weight:700}
+.result{margin-top:10px;animation:pop .6s cubic-bezier(.2,1.4,.4,1)}
+.result .name{font-family:'Mountains of Christmas',cursive;font-size:3.4rem;color:var(--pine);margin:6px 0}
+.small{font-size:.9rem;color:#6a7a73}
+@keyframes pop{from{transform:scale(.6) rotate(-4deg);opacity:0}to{transform:none;opacity:1}}
+.list{display:grid;gap:10px;margin:20px 0;text-align:left}
+.row{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e1e8e4;border-radius:12px;padding:10px 12px}
+.row b{flex:1;font-size:1.05rem}
+.row code{font:800 1.05rem ui-monospace,monospace;letter-spacing:.08em;color:var(--pine);background:#eaf3ee;padding:4px 8px;border-radius:8px}
+.row button{padding:8px 12px;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.snow,.result{animation:none}}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intercambio Navideño 🎁</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="snow"></div>
+<main class="card">
+  <div class="bow">🎀</div>
+  <h1>Intercambio Navideño</h1>
+  <p class="sub">Escribe tu código secreto para descubrir a quién le toca regalar.</p>
+  <form id="f">
+    <input id="code" placeholder="NAV-XXXXXX" autocomplete="off" autocapitalize="characters" maxlength="14" required>
+    <button type="submit">Descubrir mi regalo</button>
+  </form>
+  <p class="msg" id="msg" role="alert"></p>
+  <div class="result" id="result" hidden>
+    <p>Hola <b id="giver"></b>, tú le regalas a:</p>
+    <div class="name" id="receiver"></div>
+    <p class="small">Es un secreto: no se lo cuentes a nadie 🤫</p>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+$('f').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('msg').textContent = ''; $('result').hidden = true;
+  try {
+    const r = await fetch('/api/reveal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: $('code').value }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error);
+    $('giver').textContent = d.giver; $('receiver').textContent = d.receiver; $('result').hidden = false;
+  } catch (err) { $('msg').textContent = err.message; }
+});
+</script>
+</body>
+</html>

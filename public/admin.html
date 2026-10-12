@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin · Intercambio Navideño</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="snow"></div>
+<main class="card">
+  <div class="bow">🎅</div>
+  <h1>Panel del admin</h1>
+
+  <form id="login">
+    <p class="sub">Ingresa la contraseña para administrar el sorteo.</p>
+    <input id="pw" type="password" placeholder="Contraseña" style="text-transform:none;letter-spacing:0" required>
+    <button type="submit">Entrar</button>
+  </form>
+
+  <section id="panel" hidden>
+    <p class="sub">Aquí solo ves los códigos, no quién le toca a quién. Compártele a cada quien el suyo.</p>
+    <div class="list" id="list"></div>
+    <button id="gen" type="button"></button>
+  </section>
+
+  <p class="msg" id="msg" role="alert"></p>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let pw = '', generated = false;
+
+async function call(action) {
+  const r = await fetch('/api/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw, action }) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || 'Error');
+  return d;
+}
+
+function render(d) {
+  generated = d.generated;
+  $('login').hidden = true; $('panel').hidden = false;
+  $('gen').textContent = generated ? 'Volver a sortear' : 'Generar sorteo';
+  const list = $('list'); list.innerHTML = '';
+  if (!generated) { list.innerHTML = '<p class="small" style="text-align:center">Todavía no hay sorteo.</p>'; return; }
+  d.codes.forEach(({ name, code }) => {
+    const row = document.createElement('div'); row.className = 'row';
+    const b = document.createElement('b'); b.textContent = name;
+    const c = document.createElement('code'); c.textContent = code;
+    const btn = document.createElement('button'); btn.className = 'ghost'; btn.textContent = 'Copiar mensaje';
+    btn.onclick = async () => {
+      await navigator.clipboard.writeText(`🎁 Hola ${name}, tu código del intercambio navideño es ${code}\nConsulta a quién le regalas aquí: ${location.origin}`);
+      btn.textContent = '¡Copiado!'; setTimeout(() => (btn.textContent = 'Copiar mensaje'), 1500);
+    };
+    row.append(b, c, btn); list.append(row);
+  });
+}
+
+$('login').addEventListener('submit', async (e) => {
+  e.preventDefault(); $('msg').textContent = ''; pw = $('pw').value;
+  try { render(await call('status')); } catch (err) { $('msg').textContent = err.message; }
+});
+
+$('gen').addEventListener('click', async () => {
+  if (generated && !confirm('Se borrará el sorteo actual y los códigos anteriores dejarán de funcionar. ¿Continuar?')) return;
+  $('msg').textContent = '';
+  try { render(await call('generate')); } catch (err) { $('msg').textContent = err.message; }
+});
+</script>
+</body>
+</html>
